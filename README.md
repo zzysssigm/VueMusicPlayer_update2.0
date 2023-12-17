@@ -1,24 +1,21 @@
-# musicplayer2
 
-## Project setup
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+# 新功能：
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### （1）单曲循环模式：
+
+点击后，可以使当前歌曲播放完之后重新播放。
+
+样式上，点击后框的背景色会变成深蓝。
+
+### （2）暂停渐弱：
+
+暂停后音量会在500ms内归零，起到一个缓冲作用。
+
+暂停和切换歌曲时会触发。
+
+### （3）预览图：
+
+![preview](D:\project_2\musicplayer2\public\images\preview.png)
