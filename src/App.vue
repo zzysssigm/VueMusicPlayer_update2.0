@@ -431,6 +431,7 @@ export default {
       <button @click="pauseAll" class="control-button pause-all">{{ pauseButtonText }}</button>
       <button ref="loopButton" class="loop-button" :class="{ 'loop-active': isLooping }" @click="toggleLoop">单曲循环</button>
       <!-- <button @click="pauseAll" class="control-button pause-all"></button> -->
+      <div class="thecurrent">正在播放：{{ currentSong.name }}</div>
       <div class="progress-bar-container">
         <input type="range" min="0" :max="duration" v-model="currentTime" @input="seek" class="progress-bar" />
         <div class="time-display">
@@ -439,6 +440,7 @@ export default {
       </div>
       <ul class="music-list">
         <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
+          <button @click.stop="catchNextIndex(index)">+</button>
           {{ song.name }}
         </li>
       </ul>
@@ -456,6 +458,7 @@ export default {
       isPlayingAll: false,
       currentSongIndex: 0,
       firstSongIndex: 0,
+      nextSongIndex: 0,
       isLooping: false, // 标志单曲循环状态
       fadeOutInterval: null,
       initialVolume: 1, // 记录初始音量
@@ -515,32 +518,10 @@ export default {
       }
     },
 
-    // playSong(index) {
-    //   this.resetVolumeToInitial();
-    //   if (!this.isPlayingAll) {
-    //     this.isPlayingAll = true;
-    //     this.currentSong = this.songs[index];
-    //     this.currentSongIndex = index;
-    //     this.$refs.audio.src = this.currentSong.url;
-    //     this.$refs.audio.load();
-    //     this.$refs.audio.addEventListener('canplaythrough', () => {
-    //       this.$refs.audio.play();
-    //     }, { once: true });
-    //   } else {
-    //     this.pause(); // 先暂停当前播放的歌曲
-    //     // 然后播放新的歌曲
-    //     this.isPlayingAll = true;
-    //     this.currentSong = this.songs[index];
-    //     this.currentSongIndex = index;
-    //     this.$refs.audio.src = this.currentSong.url;
-    //     this.$refs.audio.load();
-    //     this.$refs.audio.addEventListener('canplaythrough', () => {
-    //       this.$refs.audio.play();
-    //     }, { once: true });
-    //   }
-    // },
-
     playSong(index) {
+      console.log(index);
+      this.resetVolumeToInitial();
+      this.nextSongIndex = (this.currentSongIndex + 1) % this.songs.length;
       if (!this.isPlayingAll) {
         this.isPlayingAll = true;
         this.currentSong = this.songs[index];
@@ -566,8 +547,7 @@ export default {
           this.playSong(this.currentSongIndex);
         } else {
           // 单曲循环模式关闭，播放下一首歌曲
-          const nextIndex = (this.currentSongIndex + 1) % this.songs.length;
-          this.playSong(nextIndex);
+          this.playSong(this.nextSongIndex);
         }
       }, { once: true });
 
@@ -576,38 +556,24 @@ export default {
         this.$refs.audio.play();
       }, { once: true });
     },
-   
+
     playAudio() {
       this.$refs.audio.addEventListener('canplaythrough', () => {
         this.$refs.audio.play();
       }, { once: true });
     },
 
-    //   fadeOutAndPause() {
-    //   return new Promise((resolve) => {
-    //     const audio = this.$refs.audio;
-    //     const fadeOutDuration = 2000; // 渐弱持续时间，单位毫秒
-    //     const initialVolume = audio.volume;
-    //     const step = initialVolume / (fadeOutDuration / 100);
+    catchNextIndex(index) {
+      console.log(index);
+      this.nextSongIndex = index;
+    },
 
-    //     const fadeOutInterval = setInterval(() => {
-    //       if (audio.volume - step > 0) {
-    //         audio.volume -= step;
-    //       } else {
-    //         audio.volume = 0;
-    //         clearInterval(fadeOutInterval);
-    //         this.pause();
-    //         resolve(); // 渐弱暂停完成，resolve Promise
-    //       }
-    //     }, 100);
-    //   });
-    // },
     fadeOutAndPause() {
       return new Promise((resolve) => {
         const audio = this.$refs.audio;
-        const fadeOutDuration = 500; // 渐弱持续时间，单位毫秒
+        const fadeOutDuration = 550; // 渐弱持续时间，单位毫秒
         const initialVolume = audio.volume;
-        const step = initialVolume / (fadeOutDuration / 100);
+        const step = initialVolume / (fadeOutDuration / 150);
 
         const fadeOutInterval = setInterval(() => {
           if (audio.volume - step > 0) {
@@ -699,12 +665,43 @@ export default {
       const seconds = Math.floor(time % 60);
       return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
     },
+    // 显示正在播放的音乐的名字
+
+    //下一首播放
 
   },
 };
 </script>
 
 <style>
+@keyframes tada {
+  from {
+    transform: scale3d(1, 1, 1)
+  }
+
+  10%,
+  20% {
+    transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg)
+  }
+
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg)
+  }
+
+  40%,
+  60%,
+  80% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg)
+  }
+
+  to {
+    transform: scale3d(1, 1, 1)
+  }
+}
+
 .background {
   width: 1350px;
   height: 785px;
@@ -776,6 +773,14 @@ export default {
   color: white;
 }
 
+.thecurrent {
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
 .loop-button {
   color: #0099cc;
   background: transparent;
@@ -829,6 +834,26 @@ export default {
 .music-list li:hover {
   background-color: #008CBA;
   color: white;
+}
+
+.music-list button {
+  background-color: rgb(255, 255, 255, 0.8);
+  color: #dfc6a5;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: larger;
+  transition: background-color 0.3s ease;
+  animation: tada 0.6s;
+}
+
+.music-list button:hover {
+  color: #f7fafb;
+  background-color: #a3ceea;
+}
+.music-list button:active{
+  animation: none;
 }
 
 /* 控制按钮样式 */
