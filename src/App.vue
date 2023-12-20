@@ -1,427 +1,3 @@
-<!-- <template>
-  <div>
-    <audio ref="audio" :src="currentSong.url"></audio>
-    <button @click="play">播放</button>
-    <button @click="pause">暂停</button>
-    <div>
-      <input type="range" min="0" :max="duration" v-model="currentTime" />
-    </div>
-    <ul>
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      songs: [
-        { name: "Song 1", url: "/path/to/song1.mp3" },
-        { name: "Song 2", url: "/path/to/song2.mp3" },
-        { name: "Song 3", url: "/path/to/song3.mp3" },
-      ],
-      currentSong: { name: "", url: "" },
-      currentTime: 0,
-      duration: 0,
-    };
-  },
-  methods: {
-    play() {
-      this.$refs.audio.play();
-    },
-    pause() {
-      this.$refs.audio.pause();
-    },
-    playSong(index) {
-      this.currentSong = this.songs[index];
-      this.$refs.audio.load();
-      this.$refs.audio.play();
-    },
-  },
-  mounted() {
-    this.$refs.audio.addEventListener("timeupdate", () => {
-      this.currentTime = this.$refs.audio.currentTime;
-      this.duration = this.$refs.audio.duration;
-    });
-  },
-};
-</script> -->
-<!-- <template>
-  <div>
-    <button @click="selectFolder">选择文件夹</button>
-    <audio ref="audio" :src="currentSong.url"></audio>
-    <ul>
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      songs: [],
-      currentSong: { name: "", url: "" },
-    };
-  },
-  methods: {
-    selectFolder() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.webkitdirectory = true;
-      input.directory = true;
-      input.multiple = true;
-      input.accept = 'audio/*';
-      input.addEventListener('change', this.handleFolderSelection);
-      input.click();
-    },
-    handleFolderSelection(event) {
-      const files = event.target.files;
-      this.songs = [];
-      for (let i = 0; i < files.length; i++) {
-        if (files[i].type.startsWith('audio/')) {
-          this.songs.push({
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-          });
-        }
-      }
-    },
-    play() {
-    this.$refs.audio.play();
-  },
-  pause() {
-    this.$refs.audio.pause();
-  },
-  playSong(index) {
-    this.currentSong = this.songs[index];
-    this.$refs.audio.load();
-    this.$refs.audio.addEventListener('canplaythrough', () => {
-      this.$refs.audio.play();
-    }, { once: true }); // 保证只触发一次
-  },
-  },
-};
-</script> -->
-<!-- <template>
-  <div>
-    <input type="file" @change="handleFolderSelection" webkitdirectory directory multiple accept="audio/*" style="display: none;" ref="folderInput" />
-    <button @click="selectFolder">选择文件夹</button>
-    <audio ref="audio" :src="currentSong.url" @timeupdate="updateProgress"></audio>
-    <button @click="playAll">全部播放</button>
-    <button @click="pauseAll">全部暂停</button>
-    <button @click="play">播放</button>
-    <button @click="pause">暂停</button>
-    <div>
-      <input
-        type="range"
-        min="0"
-        :max="duration"
-        v-model="currentTime"
-        @input="seek"
-      />
-    </div>
-    <ul>
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      songs: [],
-      currentSong: { name: "", url: "" },
-      currentTime: 0,
-      duration: 0,
-      isPlayingAll: false,
-      currentSongIndex: 0,
-    };
-  },
-  methods: {
-    play() {
-      this.$refs.audio.play();
-    },
-    pause() {
-      this.$refs.audio.pause();
-    },
-    playSong(index) {
-      this.currentSong = this.songs[index];
-      this.currentSongIndex = index;
-      this.$refs.audio.load();
-      this.$refs.audio.play();
-    },
-    playAll() {
-      this.isPlayingAll = true;
-      this.playSong(this.currentSongIndex);
-    },
-    pauseAll() {
-      this.isPlayingAll = false;
-      this.pause();
-    },
-    updateProgress(event) {
-      this.currentTime = event.target.currentTime;
-      this.duration = event.target.duration;
-      if (this.isPlayingAll && this.currentTime >= this.duration) {
-        if (this.currentSongIndex < this.songs.length - 1) {
-          this.currentSongIndex++;
-          this.playSong(this.currentSongIndex);
-        } else {
-          this.isPlayingAll = false;
-        }
-      }
-    },
-    seek() {
-      this.$refs.audio.currentTime = this.currentTime;
-    },
-    selectFolder() {
-      this.$refs.folderInput.click();
-    },
-    handleFolderSelection(event) {
-      const files = event.target.files;
-      for (let i = 0; i < files.length; i++) {
-        if (files[i].type.startsWith('audio/')) {
-          this.songs.push({
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-          });
-        }
-      }
-    },
-  },
-};
-</script> -->
-<!-- <template>
-  <div>
-    <audio ref="audio" :src="currentSong.url" @timeupdate="updateProgress"></audio>
-    <button @click="selectFolder">选择文件夹</button>
-    <button @click="playAll">全部播放</button>
-    <button @click="pauseAll">全部暂停</button>
-    <ul>
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      songs: [],
-      currentSong: { name: "", url: "" },
-      isPlayingAll: false,
-      currentSongIndex: 0,
-    };
-  },
-  methods: {
-    play() {
-      this.$refs.audio.play();
-    },
-
-    pause() {
-      this.$refs.audio.pause();
-    },
-
-    pauseAll() {
-      this.isPlayingAll = false;
-      this.pause();
-    },
-    playSong(index) {
-      this.currentSong = this.songs[index];
-      this.currentSongIndex = index;
-      this.$refs.audio.src = this.currentSong.url; // 设置新的音频源
-      this.$refs.audio.load(); // 可选 - 手动触发加载
-      this.$refs.audio.addEventListener('canplaythrough', () => {
-        this.$refs.audio.play(); // 当音频准备好时播放
-      }, { once: true });
-    },
-    playAll() {
-      this.isPlayingAll = true;
-      this.playSong(this.currentSongIndex);
-    },
-    updateProgress() {
-      // 更新播放进度
-    },
-    selectFolder() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.webkitdirectory = true;
-      input.directory = true;
-      input.multiple = true;
-      input.accept = 'audio/*';
-      input.addEventListener('change', this.handleFolderSelection);
-      input.click();
-    },
-    handleFolderSelection(event) {
-      const files = event.target.files;
-      for (let i = 0; i < files.length; i++) {
-        if (files[i].type.startsWith('audio/')) {
-          this.songs.push({
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-          });
-        }
-      }
-    },
-  },
-};
-</script>-->
-<!-- <template>
-  <div>
-    <audio ref="audio" :src="currentSong.url" @timeupdate="updateProgress"></audio>
-    <button @click="selectFolder">选择文件夹</button>
-    <button @click="playAll">全部播放</button>
-    <button @click="pauseAll">全部暂停</button>
-    <input
-      type="range"
-      min="0"
-      :max="duration"
-      v-model="currentTime"
-      @input="seek"
-      class="progress-bar"
-    />
-    <ul>
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      songs: [],
-      currentSong: { name: "", url: "" },
-      currentTime: 0,
-      duration: 0,
-      isPlayingAll: false,
-      currentSongIndex: 0,
-    };
-  },
-  methods: {
-    play() {
-      this.$refs.audio.play();
-    },
-
-    pause() {
-      this.$refs.audio.pause();
-    },
-
-    pauseAll() {
-      this.isPlayingAll = false;
-      this.pause();
-    },
-
-    playSong(index) {
-      this.currentSong = this.songs[index];
-      this.currentSongIndex = index;
-      this.$refs.audio.src = this.currentSong.url;
-      this.$refs.audio.load();
-      this.$refs.audio.addEventListener('canplaythrough', () => {
-        this.$refs.audio.play();
-      }, { once: true });
-    },
-
-    playAll() {
-      this.isPlayingAll = true;
-      this.playSong(this.currentSongIndex);
-    },
-
-    updateProgress(event) {
-      this.currentTime = event.target.currentTime;
-      this.duration = event.target.duration;
-    },
-
-    seek() {
-      this.$refs.audio.currentTime = this.currentTime;
-    },
-
-    selectFolder() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.webkitdirectory = true;
-      input.directory = true;
-      input.multiple = true;
-      input.accept = 'audio/*';
-      input.addEventListener('change', this.handleFolderSelection);
-      input.click();
-    },
-
-    handleFolderSelection(event) {
-      const files = event.target.files;
-      for (let i = 0; i < files.length; i++) {
-        if (files[i].type.startsWith('audio/')) {
-          this.songs.push({
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-          });
-        }
-      }
-    },
-  },
-};
-</script>
-
-<style>
-/* 样式化进度条 */
-.progress-bar {
-  width: 100%;
-  height: 10px;
-  appearance: none;
-  background: #ddd;
-  border-radius: 5px;
-  outline: none;
-}
-
-/* 进度条填充样式 */
-.progress-bar::-webkit-slider-runnable-track {
-  height: 10px;
-  border-radius: 5px;
-  background: #3498db;
-}
-
-/* 进度条滑块样式 */
-.progress-bar::-webkit-slider-thumb {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: #3498db;
-  cursor: pointer;
-}
-</style> -->
-<!-- <template>
-  <div class="music-player">
-    <audio ref="audio" :src="currentSong.url" @timeupdate="updateProgress"></audio>
-    <button @click="selectFolder">选择文件夹</button>
-    <button @click="playAll" class="control-button play-all">全部播放</button>
-    <button @click="pauseAll" class="control-button pause-all">暂停</button>
-    <input
-      type="range"
-      min="0"
-      :max="duration"
-      v-model="currentTime"
-      @input="seek"
-      class="progress-bar"
-    />
-    <ul class="music-list">
-      <li v-for="(song, index) in songs" :key="index" @click="playSong(index)">
-        {{ song.name }}
-      </li>
-    </ul>
-  </div>
-</template> -->
 <template>
   <div class="background">
     <div class="music-player">
@@ -431,6 +7,19 @@ export default {
       <button @click="pauseAll" class="control-button pause-all">{{ pauseButtonText }}</button>
       <button ref="loopButton" class="loop-button" :class="{ 'loop-active': isLooping }" @click="toggleLoop">单曲循环</button>
       <!-- <button @click="pauseAll" class="control-button pause-all"></button> -->
+      <div class="search-bar">
+        <!-- <input type="text" v-model="searchQuery" placeholder="搜索歌曲" @input="searchSongs" /> -->
+        <input type="text" v-model="searchQuery" placeholder="搜索歌曲" @input="searchSongs" ref="searchBar" />
+        <button @click="clearSearch">×</button>
+        <ul v-if="filteredSongs.length > 0" class="search-results">
+          <li v-for="(song, index) in filteredSongs" :key="index" @click="playCorrectSong(song.name)">
+            {{ song.name }}
+          </li>
+        </ul>
+      </div>
+      <div class="volume-slider">
+        <input type="range" min="0" max="100" v-model="volume" class="slider" @input="adjustVolume" />
+      </div>
       <div class="thecurrent">正在播放：{{ currentSong.name }}</div>
       <div class="progress-bar-container">
         <input type="range" min="0" :max="duration" v-model="currentTime" @input="seek" class="progress-bar" />
@@ -448,6 +37,7 @@ export default {
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -455,34 +45,34 @@ export default {
       currentSong: { name: "", url: "" },
       currentTime: 0,
       duration: 0,
-      isPlayingAll: false,
+      isPlayingAll: false,//是否有音乐正在播放
       currentSongIndex: 0,
       firstSongIndex: 0,
       nextSongIndex: 0,
       isLooping: false, // 标志单曲循环状态
       fadeOutInterval: null,
       initialVolume: 1, // 记录初始音量
+      searchQuery: '', // 存储搜索关键词
+      filteredSongs: [], // 存储搜索结果
+      songsMap: {}, // 用于映射歌曲名与索引值的对象
+      volume: 50, // 设置默认音量
     };
   },
   computed: {
     pauseButtonText() {
       return this.isPlayingAll ? '暂停' : '继续播放';
-    }
+    },
+  },
+  mounted() {
+    document.addEventListener('click', this.outsideClickHandler); // 在组件挂载后监听点击事件
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.outsideClickHandler); // 在组件销毁前移除事件监听
   },
   methods: {
     play() {
       this.$refs.audio.play();
     },
-
-    // pause() {
-    //   if (this.fadeOutInterval) {
-    //     clearInterval(this.fadeOutInterval);
-    //     this.fadeOutInterval = null;
-    //   }
-
-    //   const audio = this.$refs.audio;
-    //   audio.pause();
-    // },
 
     pause() {
       const audio = this.$refs.audio;
@@ -495,6 +85,7 @@ export default {
       if (audio.paused) {
         this.isPlayingAll = true;
         audio.currentTime = this.currentTime;
+        this.resetVolumeToInitial();
         audio.volume = this.initialVolume; // 在播放前将音量设置为初始值
         audio.play();
       } else {
@@ -568,16 +159,43 @@ export default {
       this.nextSongIndex = index;
     },
 
+    // fadeOutAndPause() {
+    //   return new Promise((resolve) => {
+    //     const audio = this.$refs.audio;
+    //     const fadeOutDuration = 550; // 渐弱持续时间，单位毫秒
+    //     const initialVolume = audio.volume;
+    //     const step = initialVolume / (fadeOutDuration / 150);
+
+    //     const fadeOutInterval = setInterval(() => {
+    //       if (audio.volume - step > 0) {
+    //         audio.volume -= step;
+    //       } else {
+    //         audio.volume = 0;
+    //         clearInterval(fadeOutInterval);
+    //         this.pause();
+    //         resolve(); // 渐弱暂停完成，resolve Promise
+    //       }
+    //     }, 100);
+    //   });
+    // },
+    
+    //渐弱效果优化
     fadeOutAndPause() {
       return new Promise((resolve) => {
         const audio = this.$refs.audio;
         const fadeOutDuration = 550; // 渐弱持续时间，单位毫秒
         const initialVolume = audio.volume;
-        const step = initialVolume / (fadeOutDuration / 150);
 
+        // 定义一个自定义函数，模拟先快后慢的渐弱效果
+        function easeOutSine(t, b, c, d) {
+          return c * Math.sin((t / d) * (Math.PI / 2)) + b;
+        }
+
+        let currentTime = 0;
         const fadeOutInterval = setInterval(() => {
-          if (audio.volume - step > 0) {
-            audio.volume -= step;
+          if (currentTime <= fadeOutDuration) {
+            audio.volume = easeOutSine(currentTime, initialVolume, -initialVolume, fadeOutDuration);
+            currentTime += 100;
           } else {
             audio.volume = 0;
             clearInterval(fadeOutInterval);
@@ -587,10 +205,11 @@ export default {
         }, 100);
       });
     },
+
     //解决暂停后切歌导致音量为0：
     resetVolumeToInitial() {//将音量初始化
       const audio = this.$refs.audio;
-      this.initialVolume = 1; // 设置初始音量为1（或者你所需的值）
+      this.initialVolume = this.volume/100; // 设置初始音量为1（或者你所需的值）
       audio.volume = this.initialVolume;
     },
     //循环播放
@@ -628,12 +247,13 @@ export default {
             name: files[i].name,
             url: URL.createObjectURL(files[i]),
           });
+          this.songsMap[files[i].name] = this.songs.length - 1;
         }
       }
       // 只有当之前没有歌曲在播放时，才进行播放
       if (!this.isPlayingAll && this.currentSong.url.trim() === '') {
         // 在这里添加一些标记或提示，等待用户点击“播放”按钮
-        // 比如设置一个变量来表示需要等待播放
+        // 比如设置一个变量来表示需要等待播放?
         this.waitingToPlay = true;
       } else {
         // 如果有歌曲在播放或者用户点击了播放按钮，开始播放音乐
@@ -665,10 +285,40 @@ export default {
       const seconds = Math.floor(time % 60);
       return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
     },
-    // 显示正在播放的音乐的名字
 
-    //下一首播放
+    searchSongs() {
+      if (this.searchQuery.trim() !== '') {
+        // 根据关键词搜索歌曲
+        this.filteredSongs = this.songs.filter(song => {
+          return song.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+        });
+      } else {
+        this.filteredSongs = []; // 清空搜索结果
+      }
+    },
 
+    clearSearch() {
+      this.searchQuery = ''; // 清空搜索关键词
+      this.filteredSongs = []; // 清空搜索结果
+    },
+
+    outsideClickHandler(event) {
+      const searchBar = this.$refs.searchBar; // 获取搜索框的引用
+      if (searchBar && !searchBar.contains(event.target)) {
+        // 点击的目标不在搜索框内，隐藏搜索结果并清空搜索关键词
+        this.clearSearch();
+      }
+    },
+
+    playCorrectSong(name) {//映射
+      this.playSong(this.songsMap[name]);
+    },
+
+    adjustVolume() {
+      const audio = this.$refs.audio; // 获取音频元素
+      const adjustedVolume = this.volume / 100; // 将滑动条的值转换为 0 到 1 之间的范围
+      audio.volume = adjustedVolume; // 直接设置音频的音量
+    },
   },
 };
 </script>
@@ -703,8 +353,8 @@ export default {
 }
 
 .background {
-  width: 1350px;
-  height: 785px;
+  width: 1380px;
+  height: 788px;
   background-image: url('/public/images/ilovemygo.png');
   background-size: cover;
   background-position: center;
@@ -852,7 +502,8 @@ export default {
   color: #f7fafb;
   background-color: #a3ceea;
 }
-.music-list button:active{
+
+.music-list button:active {
   animation: none;
 }
 
@@ -910,6 +561,7 @@ export default {
   height: 16px;
   border-radius: 5px;
   background: #78accc;
+  /* border:3px solid #050505; */
 }
 
 .progress-bar::-webkit-slider-thumb {
@@ -918,9 +570,97 @@ export default {
   border-radius: 50%;
   background: #050505;
   cursor: pointer;
+  /* border:3px solid #050505; */
 }
 
 .time-display {
   text-align: center;
+}
+
+.search-bar {
+  position: relative;
+  display: inline-block;
+}
+
+input[type="text"] {
+  margin-left: 10px;
+  padding: 8px;
+  font-size: 16px;
+  border: 3px solid #69acc2;
+  border-radius: 4px;
+}
+
+button {
+  padding: 6px 10px;
+  margin-left: 6px;
+  font-size: 14px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+ul.search-results {
+  border: 2px solid #9dccdd;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: calc(100% - 2px);
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+ul.search-results li {
+  list-style-type: none;
+  padding: 8px;
+  cursor: pointer;
+  /* 指针样式 */
+  transition: background-color 0.4s, color 0.4s;
+}
+
+ul.search-results li:hover {
+  background-color: #e0d3d3;
+  cursor: pointer;
+}
+
+.search-bar button {
+  /* 文字颜色 */
+  color: #0099CC;
+  /* 清除背景色 */
+  background: transparent;
+  /* 边框样式、颜色、宽度 */
+  border: 2px solid #0099CC;
+  /* 给边框添加圆角 */
+  border-radius: 6px;
+  /* 字母转大写 */
+  border: none;
+  color: white;
+  text-align: center;
+  display: inline-block;
+  font-size: 17px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s;
+  /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  background-color: white;
+  color: black;
+  border: 4px solid #69acc2;
+  font-weight: 700;
+  /* padding: 10px; */
+}
+
+.search-bar button:hover {
+  background-color: #008CBA;
+  color: white;
+  border: 4px solid #9dccdd;
 }
 </style>
